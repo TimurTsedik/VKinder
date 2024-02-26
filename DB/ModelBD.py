@@ -12,6 +12,7 @@ class User(Base):
     city = sa.Column(sa.Integer)
     sex = sa.Column(sa.Integer)
     age = sa.Column(sa.Integer)
+    date_create = sa.Column(sa.TIMESTAMP, server_default=sa.func.now())
 
 
 class Favorite(Base):
