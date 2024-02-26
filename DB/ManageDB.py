@@ -25,14 +25,25 @@ class ManageDB:
         Возвращает True если юзер добавлен в базу.\n"""
         x_ret = self._session.query(User).where(User.vk_id == user_info['vk_id'])
         # Проверка 18+
-        if int(user_info['age']) < 18: return False
+        if int(user_info['age']) < 18:
+            return False
         # Проверка на существование в базе
-        elif len(x_ret.all()) > 0: return False
+        elif len(x_ret.all()) > 0:
+            return False
         else:
             self._session.add(
-            User(vk_id=user_info['vk_id'], name=user_info['name'], surname=user_info['surname'], age=user_info['age'],
-                 sex=user_info['sex'],
-                 city=user_info['city']))
+                User(vk_id=user_info['vk_id'],
+                     name=user_info['name'],
+                     surname=user_info['surname'],
+                     age=user_info['age'],
+                     sex=user_info['sex'],
+                     city=user_info['city'],
+                     foto_a_1=user_info['foto_a_1'],
+                     foto_a_2=user_info['foto_a_2'],
+                     foto_a_3=user_info['foto_a_3'],
+                     foto_fr_1=user_info['foto_fr_1'],
+                     foto_fr_2=user_info['foto_fr_2'],
+                     foto_fr_3=user_info['foto_fr_3']))
             self._session.commit()
             return True
 
@@ -66,6 +77,7 @@ class ManageDB:
             self._session.add(Favorite(user_id=user_id, user_fav_id=fav_id))
             self._session.commit()
             return True
+
     def remove_favorites(self, user_id: str, fav_id: str) -> bool:
         """Удаление пользователя из избранных\n
         Parameters:\n
@@ -75,7 +87,6 @@ class ManageDB:
         self._session.query(Favorite).where(Favorite.user_id == user_id, Favorite.user_fav_id == fav_id).delete()
         self._session.commit()
         return True
-
 
     def add_blacklist(self, user_id: str, bl_id: str) -> bool:
         """Добавление пользователя черный список\n
@@ -132,7 +143,9 @@ class ManageDB:
         Возвращает не пустой LIST, если все хорошо."""
         x_ret = self._session.query(User).where(User.vk_id == vk_id)
         for x in x_ret.all():
-            return {"name": x.name, "surname": x.surname, "age": x.age, "sex": x.sex, "city": x.city, "vk_id": x.vk_id}
+            return {"name": x.name, "surname": x.surname, "age": x.age, "sex": x.sex, "city": x.city, "vk_id": x.vk_id,
+                    "foto_a_1": x.foto_a_1, "foto_a_2": x.foto_a_2, "foto_a_3": x.foto_a_3, "foto_fr_1": x.foto_fr_1,
+                    "foto_fr_2": x.foto_fr_2, "foto_fr_3": x.foto_fr_3}
         return {}
 
 
@@ -143,9 +156,13 @@ if __name__ == '__main__':
     DB = ManageDB(db_name=config['DB']['DB_name'], user_name=config['DB']['DB_user'],
                   user_password=config['DB']['DB_password'])
 
-    DB.add_user({"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "1"})
-    DB.add_user({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2"})
-    DB.add_user({"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3"})
+    DB.add_user({"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "1", "foto_a_1": "1",
+                 "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+    DB.add_user({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2", "foto_a_1": "1",
+                 "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+    DB.add_user(
+        {"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3", "foto_a_1": "1", "foto_a_2": "2",
+         "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
     DB.actualize_user({"name": "Vasya", "surname": "Pupkin", "age": 38, "sex": 1, "city": 1, "vk_id": "1"})
     DB.add_favorites("1", "2")
     # DB.add_blacklist("1", "3")
