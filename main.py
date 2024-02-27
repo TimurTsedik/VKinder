@@ -17,7 +17,7 @@ def write_msg(user_id, message):
 vk_token = get_ini_value('VK', 'token')
 vk = vk_api.VkApi(token=vk_token)
 session_api = vk.get_api()
-long_poll = VkLongPoll(vk, group_id=224829501)
+long_poll = VkLongPoll(vk)
 
 # Основной цикл
 for event in long_poll.listen():
