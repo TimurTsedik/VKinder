@@ -2,6 +2,7 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from random import randrange
 from vk_bot import VkBot
+from vk_bot import UserResultsStorage
 
 
 def get_tokens(file_name: str = "config.txt"):
@@ -18,11 +19,12 @@ def start_vk_bot(token_1, token_2):
         vk.method('messages.send', {
             'user_id': user_id, 'message': message, 'random_id': randrange(10 ** 7)})
 
+    userResults = UserResultsStorage()
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW:
             if event.to_me:
 
-                bot = VkBot(event.user_id, token_1, token_2)
+                bot = VkBot(event.user_id, token_1, token_2, userResults)
                 message = bot.execute_command(event.text)
                 write_msg(event.user_id, message)
 

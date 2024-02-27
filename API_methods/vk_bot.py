@@ -2,11 +2,28 @@ import requests
 from datetime import date
 
 
+class UserResultsStorage:
+    def __init__(self):
+        self.users = {}
+
+    def add_user(self, user_id):
+        if user_id not in self.users:
+            self.users[user_id] = []
+
+    def add_data(self, user_id, data):
+        if user_id in self.users:
+            self.users[user_id].append(data)
+        else:
+            self.add_user(user_id)
+            self.users[user_id].append(data)
+
+    def get_data(self, user_id):
+        return self.users[user_id][0].pop(0)
+
+
 class VkBot:
-
     base_url = 'https://api.vk.com/method/'
-
-    def __init__(self, user_id, token_1, token_2):
+    def __init__(self, user_id, token_1, token_2, user_results):
 
         self.token_1 = token_1
         self.token_2 = token_2
@@ -15,10 +32,13 @@ class VkBot:
         self._USER_DATA = self._get_user_data_from_vk_id(user_id)
         self._COMMANDS = ["ПРИВЕТ", "ПОИСК", "СЛЕДУЮЩИЙ",
                           "ДОБАВИТЬ В ИЗБРАННОЕ", "СПИСОК ИЗБРАННОГО", "ПОКА"]
+        self.user_results = user_results
+
+
 
     @staticmethod
-    def calculate_age(bdate):
-        data = [int(el) for el in bdate.split('.')]
+    def calculate_age(birth_date):
+        data = [int(el) for el in birth_date.split('.')]
         if len(data) != 3:
             return 0
         today = date.today()
@@ -47,23 +67,19 @@ class VkBot:
         return response
 
     def search_boy_girl_friends(self, user_data: dict):
-
         url = self.base_url + 'users.search?'
         params = {"access_token": self.token_2, "v": "5.131"}
-
         if user_data['sex'] == 0:
             sex = 0
         elif user_data['sex'] == 1:
             sex = 2
         else:
             sex = 1
-
         if user_data['age'] == 0:
             min_age, max_age = 18, 30
         else:
             min_age, max_age = max(
                 18, user_data['age'] - 5), max(18, user_data['age'] + 5)
-
         params.update({
             'city': user_data['city']['id'],
             'sex': sex,
@@ -80,11 +96,14 @@ class VkBot:
         except:
             return f"Не удалось найти пользователей для знакомств"
 
-        '''Необходим код для записи данных(список items) в БД'''
+        self.user_results.add_user(self._USER_DATA['id'])
+        self.user_results.add_data(self._USER_DATA['id'], items)
+
+
 
         return f"Найдены записи о {count} пользователях для знакомства. Для просмотра введите команду 'Следующий'"
 
-    def execute_command(self, comand):
+    def execute_command(self, comand: str):
 
         # Привет
         if comand.strip().upper() == self._COMMANDS[0]:
@@ -95,10 +114,13 @@ class VkBot:
             message = self.search_boy_girl_friends(self._USER_DATA)
             return message
 
-        # Выдача следующего пользователя
+        # Выдача следующего результата
         elif comand.strip().upper() == self._COMMANDS[2]:
-            '''Нужен код для выборки из БД данных по следующему подходящему пользователю'''
-            return ' '
+            next_item = self.user_results.get_data(self._USER_DATA['id'])
+            first_name = next_item['first_name']
+            last_name = next_item['last_name']
+            birth_date = next_item['bdate']
+            return f"Имя: {first_name}\nФамилия: {last_name}\nДата рождения: {birth_date}"
 
         # Добавление пользователя в избранное
         elif comand.strip().upper() == self._COMMANDS[3]:
