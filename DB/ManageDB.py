@@ -1,4 +1,5 @@
 import configparser
+from datetime import datetime, timedelta
 
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
@@ -55,11 +56,14 @@ class ManageDB:
         Age - integer > 0\n
         Gender is Male = 1, Female = 0\n
         City - INTEGER\n
-        Возвращает True если юзер обновлен в базу.\n"""
-        x_ret = self._session.query(User).where(User.vk_id == user_info['vk_id'])
-        x_ret.update(user_info)
-        self._session.commit()
-        return True
+        Возвращает True если юзер обновлен в базе.\n"""
+        if self.get_user_by_vk_id(user_info['vk_id']) is None or datetime.now() - self.get_user_by_vk_id(user_info['vk_id'])['date_create'] > timedelta(days=1):
+            x_ret = self._session.query(User).where(User.vk_id == user_info['vk_id'])
+            x_ret.update(user_info)
+            self._session.commit()
+            return True
+        else:
+            return False
 
     def add_favorites(self, user_id: str, fav_id: str) -> bool:
         """Добавление пользователя с базу избранных\n
@@ -67,13 +71,13 @@ class ManageDB:
         user_id кто добавляет в базу\n
         fav_id кого добавляют в базу\n
         Возвращает True если добавлено\n"""
-        # Проверка на существование в черном списке
-        if fav_id in self.get_list_blacklist(user_id):
-            return False
         # Проверка на существование в избранных
-        elif fav_id in self.get_list_favorites(user_id):
+        if fav_id in self.get_list_favorites(user_id):
             return False
         else:
+            # Проверка на существование в черном списке и удаление из него
+            if fav_id in self.get_list_blacklist(user_id):
+                self.remove_blacklist(user_id, fav_id)
             self._session.add(Favorite(user_id=user_id, user_fav_id=fav_id))
             self._session.commit()
             return True
@@ -94,12 +98,13 @@ class ManageDB:
         user_id кто добавляет в базу\n
         bl_id кого добавляют в базу\n
         Возвращает True если добавлено\n"""
+        # Проверка на существование в черном списке
         if bl_id in self.get_list_blacklist(user_id):
             return False
-        # Проверка на существование в избранных
-        elif bl_id in self.get_list_favorites(user_id):
-            return False
         else:
+            # Проверка на существование в избранных и удаление из избранных
+            if bl_id in self.get_list_favorites(user_id):
+                self.remove_favorites(user_id, bl_id)
             self._session.add(BlackList(user_id=user_id, user_black_id=bl_id))
             self._session.commit()
             return True
@@ -144,6 +149,7 @@ class ManageDB:
         x_ret = self._session.query(User).where(User.vk_id == vk_id)
         for x in x_ret.all():
             return {"name": x.name, "surname": x.surname, "age": x.age, "sex": x.sex, "city": x.city, "vk_id": x.vk_id,
+                    "date_create": x.date_create,
                     "foto_a_1": x.foto_a_1, "foto_a_2": x.foto_a_2, "foto_a_3": x.foto_a_3, "foto_fr_1": x.foto_fr_1,
                     "foto_fr_2": x.foto_fr_2, "foto_fr_3": x.foto_fr_3}
         return {}
@@ -152,7 +158,7 @@ class ManageDB:
 # Тест базы
 if __name__ == '__main__':
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read('../config.ini')
     DB = ManageDB(db_name=config['DB']['DB_name'], user_name=config['DB']['DB_user'],
                   user_password=config['DB']['DB_password'])
 
