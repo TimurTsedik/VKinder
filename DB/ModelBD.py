@@ -13,12 +13,6 @@ class User(Base):
     sex = sa.Column(sa.Integer)
     age = sa.Column(sa.Integer)
     date_create = sa.Column(sa.TIMESTAMP, server_default=sa.func.now())
-    foto_a_1= sa.Column(sa.VARCHAR(256))
-    foto_a_2= sa.Column(sa.VARCHAR(256))
-    foto_a_3= sa.Column(sa.VARCHAR(256))
-    foto_fr_1= sa.Column(sa.VARCHAR(256))
-    foto_fr_2= sa.Column(sa.VARCHAR(256))
-    foto_fr_3= sa.Column(sa.VARCHAR(256))
 
 
 class Favorite(Base):
