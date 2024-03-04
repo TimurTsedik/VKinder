@@ -15,7 +15,7 @@ class ManageDB:
         create_tables(self.engine)
         self._session = sessionmaker(bind=self.engine)()
 
-    def add_user(self, user_info: dict) -> bool:
+    def add_user_db(self, user_info: dict) -> bool:
         """Добавление пользователя в базу\n
         Параметры:\n
         Vk_id - short string\n
@@ -162,16 +162,16 @@ if __name__ == '__main__':
     DB = ManageDB(db_name=config['DB']['DB_name'], user_name=config['DB']['DB_user'],
                   user_password=config['DB']['DB_password'])
 
-    DB.add_user({"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "1", "foto_a_1": "1",
+    DB.add_user_db({"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "431302925", "foto_a_1": "1",
                  "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
-    DB.add_user({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2", "foto_a_1": "1",
+    DB.add_user_db({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2", "foto_a_1": "1",
                  "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
-    DB.add_user(
+    DB.add_user_db(
         {"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3", "foto_a_1": "1", "foto_a_2": "2",
          "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
-    DB.actualize_user({"name": "Vasya", "surname": "Pupkin", "age": 38, "sex": 1, "city": 1, "vk_id": "1"})
-    DB.add_favorites("1", "2")
-    # DB.add_blacklist("1", "3")
-    print(DB.get_list_favorites("1"))
-    print(DB.get_list_blacklist("1"))
-    print(DB.get_user_by_vk_id("1"))
+    DB.actualize_user({"name": "Vasya", "surname": "Pupkin", "age": 38, "sex": 1, "city": 1, "vk_id": "431302925"})
+    DB.add_favorites("431302925", "2")
+    DB.add_blacklist("431302925", "3")
+    print(DB.get_list_favorites("431302925"))
+    print(DB.get_list_blacklist("431302925"))
+    print(DB.get_user_by_vk_id("431302925"))

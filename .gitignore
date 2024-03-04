@@ -1,5 +1,4 @@
 .idea/
 .venv/
 .gitignore
-config.ini
 requirements.txt

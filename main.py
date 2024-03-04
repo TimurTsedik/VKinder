@@ -7,6 +7,7 @@ from vk_bot import VkBot
 from vk_bot import UserResultsStorage
 
 import configparser
+from DB.ManageDB import ManageDB
 
 
 def get_tokens(file_name: str = "config.ini"):
@@ -39,7 +40,7 @@ def start_vk_bot(token_1, token_2):
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW:
             if event.to_me:
-                bot = VkBot(event.user_id, token_1, token_2, user_results)
+                bot = VkBot(event.user_id, token_1, token_2, user_results, DB)
                 message, keyboard = bot.execute_command(event.text)
                 write_msg(event.user_id, message, keyboard)
 
