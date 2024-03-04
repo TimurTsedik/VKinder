@@ -66,7 +66,7 @@ class ManageDB:
         else:
             return False
 
-    def add_favorites(self, user_id: int, fav_id: int) -> bool:
+    def add_favorites(self, user_id: str, fav_id: str) -> bool:
         """Добавление пользователя с базу избранных\n
         Parameters:\n
         user_id кто добавляет в базу\n
@@ -83,7 +83,7 @@ class ManageDB:
             self._session.commit()
             return True
 
-    def remove_favorites(self, user_id: int, fav_id: int) -> bool:
+    def remove_favorites(self, user_id: str, fav_id: str) -> bool:
         """Удаление пользователя из избранных\n
         Parameters:\n
         user_id кто удаляет из базы\n
@@ -93,7 +93,7 @@ class ManageDB:
         self._session.commit()
         return True
 
-    def add_blacklist(self, user_id: int, bl_id: int) -> bool:
+    def add_blacklist(self, user_id: str, bl_id: str) -> bool:
         """Добавление пользователя черный список\n
         Parameters:\n
         user_id кто добавляет в базу\n
@@ -110,7 +110,7 @@ class ManageDB:
             self._session.commit()
             return True
 
-    def remove_blacklist(self, user_id: int, bl_id: int) -> bool:
+    def remove_blacklist(self, user_id: str, bl_id: str) -> bool:
         """Удаление пользователя из черного списка\n
         Parameters:\n
         user_id кто удаляет из базы\n
@@ -120,7 +120,7 @@ class ManageDB:
         self._session.commit()
         return True
 
-    def get_list_favorites(self, vk_id: int) -> list:
+    def get_list_favorites(self, vk_id: str) -> list:
         """Получение списка избранных\n
         Возвращает не пустой LIST, если все хорошо."""
         fav_list = []
@@ -132,7 +132,7 @@ class ManageDB:
         except:
             return fav_list
 
-    def get_list_blacklist(self, vk_id: int) -> list:
+    def get_list_blacklist(self, vk_id: str) -> list:
         """Получение черного списка\n
         Возвращает не пустой LIST, если все хорошо."""
         bl_list = []
@@ -144,7 +144,7 @@ class ManageDB:
         except:
             return bl_list
 
-    def get_user_by_vk_id(self, vk_id: int) -> dict:
+    def get_user_by_vk_id(self, vk_id: str) -> dict:
         """Получение словаря с данными юзера\n
         Возвращает не пустой LIST, если все хорошо."""
         x_ret = self._session.query(User).where(User.vk_id == vk_id)
@@ -163,10 +163,11 @@ if __name__ == '__main__':
     DB = ManageDB(db_name=config['DB']['DB_name'], user_name=config['DB']['DB_user'],
                   user_password=config['DB']['DB_password'])
 
-    DB.add_user_db({"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "431302925", "foto_a_1": "1",
-                 "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+    DB.add_user_db(
+        {"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "431302925", "foto_a_1": "1",
+         "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
     DB.add_user_db({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2", "foto_a_1": "1",
-                 "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+                    "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
     DB.add_user_db(
         {"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3", "foto_a_1": "1", "foto_a_2": "2",
          "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
@@ -176,4 +177,3 @@ if __name__ == '__main__':
     print(DB.get_list_favorites("431302925"))
     print(DB.get_list_blacklist("431302925"))
     print(DB.get_user_by_vk_id("431302925"))
-
