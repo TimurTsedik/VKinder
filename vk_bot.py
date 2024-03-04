@@ -25,14 +25,11 @@ def create_keyboard(response):
     elif response == 'работа с избранными':
         keyboard.add_button('Перенести в черный список', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Отправить сообщение', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Следующий в избранном', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Вернуться в начало', color=VkKeyboardColor.NEGATIVE)
 
     elif response == 'работа с черным списком':
         keyboard.add_button('Перенести в избранное', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Отправить сообщение', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Следующий в черном списке', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Вернуться в начало', color=VkKeyboardColor.NEGATIVE)
 
@@ -43,7 +40,6 @@ def create_keyboard(response):
         keyboard.add_button('В избранное', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('В черный список', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Сообщение', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Следующий в поиске', color=VkKeyboardColor.POSITIVE)
         keyboard.add_line()
         keyboard.add_button('Вернуться в начало', color=VkKeyboardColor.NEGATIVE)

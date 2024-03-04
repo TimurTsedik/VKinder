@@ -18,7 +18,7 @@ class ManageDB:
     def add_user_db(self, user_info: dict) -> bool:
         """Добавление пользователя в базу\n
         Параметры:\n
-        Vk_id - short string\n
+        Vk_id - integer\n
         Name - string\n
         Age - integer > 0\n
         Gender is Male = 1, Female = 0\n
@@ -57,7 +57,8 @@ class ManageDB:
         Gender is Male = 1, Female = 0\n
         City - INTEGER\n
         Возвращает True если юзер обновлен в базе.\n"""
-        if self.get_user_by_vk_id(user_info['vk_id']) is None or datetime.now() - self.get_user_by_vk_id(user_info['vk_id'])['date_create'] > timedelta(days=1):
+        if self.get_user_by_vk_id(user_info['vk_id']) is None or datetime.now() - \
+                self.get_user_by_vk_id(user_info['vk_id'])['date_create'] > timedelta(days=1):
             x_ret = self._session.query(User).where(User.vk_id == user_info['vk_id'])
             x_ret.update(user_info)
             self._session.commit()
@@ -65,7 +66,7 @@ class ManageDB:
         else:
             return False
 
-    def add_favorites(self, user_id: str, fav_id: str) -> bool:
+    def add_favorites(self, user_id: int, fav_id: int) -> bool:
         """Добавление пользователя с базу избранных\n
         Parameters:\n
         user_id кто добавляет в базу\n
@@ -82,7 +83,7 @@ class ManageDB:
             self._session.commit()
             return True
 
-    def remove_favorites(self, user_id: str, fav_id: str) -> bool:
+    def remove_favorites(self, user_id: int, fav_id: int) -> bool:
         """Удаление пользователя из избранных\n
         Parameters:\n
         user_id кто удаляет из базы\n
@@ -92,7 +93,7 @@ class ManageDB:
         self._session.commit()
         return True
 
-    def add_blacklist(self, user_id: str, bl_id: str) -> bool:
+    def add_blacklist(self, user_id: int, bl_id: int) -> bool:
         """Добавление пользователя черный список\n
         Parameters:\n
         user_id кто добавляет в базу\n
@@ -109,7 +110,7 @@ class ManageDB:
             self._session.commit()
             return True
 
-    def remove_blacklist(self, user_id: str, bl_id: str) -> bool:
+    def remove_blacklist(self, user_id: int, bl_id: int) -> bool:
         """Удаление пользователя из черного списка\n
         Parameters:\n
         user_id кто удаляет из базы\n
@@ -119,7 +120,7 @@ class ManageDB:
         self._session.commit()
         return True
 
-    def get_list_favorites(self, vk_id: str) -> list:
+    def get_list_favorites(self, vk_id: int) -> list:
         """Получение списка избранных\n
         Возвращает не пустой LIST, если все хорошо."""
         fav_list = []
@@ -131,7 +132,7 @@ class ManageDB:
         except:
             return fav_list
 
-    def get_list_blacklist(self, vk_id: str) -> list:
+    def get_list_blacklist(self, vk_id: int) -> list:
         """Получение черного списка\n
         Возвращает не пустой LIST, если все хорошо."""
         bl_list = []
@@ -143,7 +144,7 @@ class ManageDB:
         except:
             return bl_list
 
-    def get_user_by_vk_id(self, vk_id: str) -> dict:
+    def get_user_by_vk_id(self, vk_id: int) -> dict:
         """Получение словаря с данными юзера\n
         Возвращает не пустой LIST, если все хорошо."""
         x_ret = self._session.query(User).where(User.vk_id == vk_id)
@@ -175,3 +176,4 @@ if __name__ == '__main__':
     print(DB.get_list_favorites("431302925"))
     print(DB.get_list_blacklist("431302925"))
     print(DB.get_user_by_vk_id("431302925"))
+
