@@ -19,7 +19,10 @@ class User(Base):
     foto_fr_1 = sa.Column(sa.VARCHAR(256))
     foto_fr_2 = sa.Column(sa.VARCHAR(256))
     foto_fr_3 = sa.Column(sa.VARCHAR(256))
-
+    interests= sa.Column(sa.VARCHAR(10000))
+    books= sa.Column(sa.VARCHAR(10000))
+    music= sa.Column(sa.VARCHAR(10000))
+    movies= sa.Column(sa.VARCHAR(10000))
 
 class Favorite(Base):
     __tablename__ = "users_favorites"

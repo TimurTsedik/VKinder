@@ -2,7 +2,7 @@ import requests
 from datetime import date
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 import re
-
+import random
 
 def create_keyboard(response):
     keyboard = VkKeyboard()
@@ -75,6 +75,9 @@ class UserResultsStorage:
 
     def erase_data(self, user_id):
         self.users[user_id] = []
+
+    def randomize_data(self, user_id):
+        random.shuffle(self.users[user_id])
 
 
 class VkBot:
@@ -189,12 +192,12 @@ class VkBot:
         self.user_results.add_user(self._USER_DATA['id'])
         # очистка от предыдущих результатов поиска
         self.user_results.erase_data(self._USER_DATA['id'])
-        for item in items:
-            self.user_results.add_data(self._USER_DATA['id'], item['id'])
+        for _, item in enumerate(items):
             if self.safe_get_from_dict(item, 'bdate') == '':
                 age = 0
             else:
                 age = self.calculate_age(self.safe_get_from_dict(item, 'bdate'))
+            user_dict = {}
             user_dict = {
                 'vk_id': str(item['id']),
                 'name': self.safe_get_from_dict(item, 'first_name'),
@@ -207,10 +210,18 @@ class VkBot:
                 'foto_a_3': '',
                 'foto_fr_1': '',
                 'foto_fr_2': '',
-                'foto_fr_3': ''
+                'foto_fr_3': '',
+                'interests': self.safe_get_from_dict(item, 'interests'),
+                'books': self.safe_get_from_dict(item, 'books'),
+                'movies': self.safe_get_from_dict(item, 'movies'),
+                'music': self.safe_get_from_dict(item, 'music')
             }
-            self.dbObject.add_user_db(user_dict)
-        return f"Найдены записи о {count} пользователях для знакомства. Для просмотра нажмите кнопку 'Следующий в поиске'"
+            if not self.dbObject.add_user_db(user_dict):
+                print(f"Не удалось добавить пользователя {user_dict['vk_id']} в базу данных")
+            else:
+                self.user_results.add_data(self._USER_DATA['id'], item['id'])
+                self.user_results.randomize_data(self._USER_DATA['id'])
+        return f"Найдены записи о {_} пользователях для знакомства. Для просмотра нажмите кнопку 'Следующий в поиске'"
 
     def execute_command(self, command: str):
         # 0 "ПРИВЕТ"
@@ -218,19 +229,27 @@ class VkBot:
             # сохраняем в память и в базу данные обратившегося
             photos = self.get_user_most_liked_photos(self._USER_DATA['id'])
             user_dict = {}
+            prefix = 'photo' + str(self._USER_DATA['id']) + '_'
+            photo1 = str(self.safe_get_from_list(self.safe_get_from_list(photos, 0), 3))
+            photo2 = str(self.safe_get_from_list(self.safe_get_from_list(photos, 1), 3))
+            photo3 = str(self.safe_get_from_list(self.safe_get_from_list(photos, 2), 3))
             user_dict = {
                 'vk_id': str(self._USER_DATA['id']),
-                'name': self._USER_DATA['first_name'],
-                'surname': self._USER_DATA['last_name'],
-                'age': self._USER_DATA['age'],
-                'sex': self._USER_DATA['sex'],
-                'city': self._USER_DATA['city']['title'],
-                'foto_a_1': self.safe_get_from_list(self.safe_get_from_list(photos, 0), 1),
-                'foto_a_2': self.safe_get_from_list(self.safe_get_from_list(photos, 1), 1),
-                'foto_a_3': self.safe_get_from_list(self.safe_get_from_list(photos, 2), 1),
+                'name': self.safe_get_from_dict(self._USER_DATA, 'first_name'),
+                'surname': self.safe_get_from_dict(self._USER_DATA,'last_name'),
+                'age': self.safe_get_from_dict(self._USER_DATA, 'age'),
+                'sex': self.safe_get_from_dict(self._USER_DATA,'sex'),
+                'city': self.safe_get_from_dict(self.safe_get_from_dict(self._USER_DATA,'city'), 'title'),
+                'foto_a_1': prefix + photo1 if photo1 != '' else '',
+                'foto_a_2': prefix + photo2 if photo2 != '' else '',
+                'foto_a_3': prefix + photo3 if photo3 != '' else '',
                 'foto_fr_1': '',
                 'foto_fr_2': '',
-                'foto_fr_3': ''
+                'foto_fr_3': '',
+                'interests': self.safe_get_from_dict(self._USER_DATA, 'interests'),
+                'books': self.safe_get_from_dict(self._USER_DATA, 'books'),
+                'movies': self.safe_get_from_dict(self._USER_DATA, 'movies'),
+                'music': self.safe_get_from_dict(self._USER_DATA, 'music')
             }
             self.dbObject.add_user_db(user_dict)
             keyboard = create_keyboard(command.strip().lower())
@@ -261,6 +280,13 @@ class VkBot:
             url = f'https://vk.com/id{next_item}'
             message = f"Кандидат в поиске:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
             keyboard = create_keyboard(command.strip().lower())
+            next_user_pics = {
+                'vk_id': next_item,
+                'foto_a_1': self.safe_get_from_list(attachment.split(','), 0),
+                'foto_a_2': self.safe_get_from_list(attachment.split(','), 1),
+                'foto_a_3': self.safe_get_from_list(attachment.split(','), 2)
+            }
+            self.dbObject.actualize_user(next_user_pics)
             # Сохраняем в памяти ID последнего выведенного кандидата
             self.user_results.add_user(str(self._USER_DATA['id']) + 'last')
             self.user_results.add_data(str(self._USER_DATA['id']) + 'last', next_item)
@@ -293,71 +319,67 @@ class VkBot:
             attachment = ''
             return message, keyboard, attachment
 
-        # 6 'Отправить сообщение'
+        # 6 'Вернуться в начало'
         elif command.strip().upper() == self._COMMANDS[6]:
-            keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет отправить сообщение'
-            attachment = ''
-            return message, keyboard, attachment
-
-        # 7 'Вернуться в начало'
-        elif command.strip().upper() == self._COMMANDS[7]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'Возвращаемся в самое начало'
             attachment = ''
             return message, keyboard, attachment
 
-        # 8 "РАБОТА С ИЗБРАННЫМИ"
-        elif command.strip().upper() == self._COMMANDS[8]:
+        # 7 "РАБОТА С ИЗБРАННЫМИ"
+        elif command.strip().upper() == self._COMMANDS[7]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет работа с избранным'
             attachment = ''
             return message, keyboard, attachment
 
-        # 9 'Перенести в черный список'
-        elif command.strip().upper() == self._COMMANDS[9]:
+        # 8 'Перенести в черный список'
+        elif command.strip().upper() == self._COMMANDS[8]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет перенести в черный список'
             attachment = ''
             return message, keyboard, attachment
 
-        # 10 'Следующий в избранном'
-        elif command.strip().upper() == self._COMMANDS[10]:
+        # 9 'Следующий в избранном'
+        elif command.strip().upper() == self._COMMANDS[9]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет следующий в избранном'
             attachment = ''
             return message, keyboard, attachment
 
-        # 11 "РАБОТА С ЧЕРНЫМ СПИСКОМ"
-        elif command.strip().upper() == self._COMMANDS[11]:
+        # 10 "РАБОТА С ЧЕРНЫМ СПИСКОМ"
+        elif command.strip().upper() == self._COMMANDS[10]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет работа с черным списком'
             attachment = ''
             return message, keyboard, attachment
 
-        # 12 'Перенести в избранное'
-        elif command.strip().upper() == self._COMMANDS[12]:
+        # 11 'Перенести в избранное'
+        elif command.strip().upper() == self._COMMANDS[11]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет перенести в избранное'
             attachment = ''
             return message, keyboard, attachment
 
-        # 13'Следующий в черном списке'
-        elif command.strip().upper() == self._COMMANDS[13]:
+        # 12'Следующий в черном списке'
+        elif command.strip().upper() == self._COMMANDS[12]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет следующий в черном списке'
             attachment = ''
             return message, keyboard, attachment
 
-        # 14 "ПОКА"
-        elif command.strip().upper() == self._COMMANDS[14]:
+        # 13 "ПОКА"
+        elif command.strip().upper() == self._COMMANDS[13]:
             keyboard = create_keyboard(command.strip().lower())
-            message = "Пока, {self._USER_DATA['first_name']}!"
+            message = f"Пока, {self._USER_DATA['first_name']}!"
             attachment = ''
             return message, keyboard, attachment
 
         else:
-            return "Не понимаю о чем вы..."
+            keyboard = create_keyboard('привет')
+            message = f"Не понимаю о чем вы..., {self._USER_DATA['first_name']}!"
+            attachment = ''
+            return message, keyboard, attachment
 
     def _user_photos(self, album: str, user_id: str) -> dict:
         # Retrieve user photos from a specified album.

@@ -34,17 +34,21 @@ class ManageDB:
         else:
             self._session.add(
                 User(vk_id=user_info['vk_id'],
-                     name=user_info['name'],
-                     surname=user_info['surname'],
-                     age=user_info['age'],
-                     sex=user_info['sex'],
-                     city=user_info['city'],
-                     foto_a_1=user_info['foto_a_1'],
-                     foto_a_2=user_info['foto_a_2'],
-                     foto_a_3=user_info['foto_a_3'],
-                     foto_fr_1=user_info['foto_fr_1'],
-                     foto_fr_2=user_info['foto_fr_2'],
-                     foto_fr_3=user_info['foto_fr_3']))
+                    name=user_info['name'],
+                    surname=user_info['surname'],
+                    age=user_info['age'],
+                    sex=user_info['sex'],
+                    city=user_info['city'],
+                    foto_a_1=user_info['foto_a_1'],
+                    foto_a_2=user_info['foto_a_2'],
+                    foto_a_3=user_info['foto_a_3'],
+                    foto_fr_1=user_info['foto_fr_1'],
+                    foto_fr_2=user_info['foto_fr_2'],
+                    foto_fr_3 = user_info['foto_fr_3'],
+                    interests = user_info['interests'],
+                    books = user_info['books'],
+                    music = user_info['music'],
+                    movies = user_info['movies']))
             self._session.commit()
             return True
 
@@ -57,7 +61,7 @@ class ManageDB:
         Gender is Male = 1, Female = 0\n
         City - INTEGER\n
         Возвращает True если юзер обновлен в базе.\n"""
-        if self.get_user_by_vk_id(user_info['vk_id']) is None or datetime.now() - \
+        if self.get_user_by_vk_id(user_info['vk_id']) is not None or datetime.now() - \
                 self.get_user_by_vk_id(user_info['vk_id'])['date_create'] > timedelta(days=1):
             x_ret = self._session.query(User).where(User.vk_id == user_info['vk_id'])
             x_ret.update(user_info)
