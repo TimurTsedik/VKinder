@@ -71,6 +71,8 @@ class UserResultsStorage:
             self.users[user_id].append(data)
 
     def get_data(self, user_id):
+        if user_id not in self.users:
+            return ''
         return self.users[user_id].pop(0)
 
     def erase_data(self, user_id):
@@ -267,6 +269,12 @@ class VkBot:
         # 2 "СЛЕДУЮЩИЙ В ПОИСКЕ"
         elif command.strip().upper() == self._COMMANDS[2]:
             next_item = str(self.user_results.get_data(self._USER_DATA['id']))
+            if next_item == '':
+                keyboard = create_keyboard('Привет')
+                message = 'Необходимо сначала сделать поиск'
+                attachment = ''
+                return message, keyboard, attachment
+
             user_details = self.dbObject.get_user_by_vk_id(next_item)
             first_name = user_details['name']
             last_name = user_details['surname']
