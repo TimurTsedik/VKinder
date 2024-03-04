@@ -235,13 +235,15 @@ class VkBot:
             self.dbObject.add_user_db(user_dict)
             keyboard = create_keyboard(command.strip().lower())
             message = f"Привет, {self._USER_DATA['first_name']}!"
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 1 "ПОИСК"
         elif command.strip().upper() == self._COMMANDS[1]:
             keyboard = create_keyboard(command.strip().lower())
             message = self.search_boy_girl_friends(self._USER_DATA)
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 2 "СЛЕДУЮЩИЙ В ПОИСКЕ"
         elif command.strip().upper() == self._COMMANDS[2]:
@@ -250,19 +252,19 @@ class VkBot:
             first_name = user_details['name']
             last_name = user_details['surname']
             age = user_details['age']
-            photo_url = ''
-            # Выводим 3 фотографи. Если вернулся не УРЛ, значит ошибка доступа к фото
+            attachment = ''
             for photo in self.get_user_most_liked_photos(next_item):
-                if 'https' in photo[1]:
-                    photo_url += photo[1] + '\n'
+                if attachment != '':
+                    attachment += ',photo' + str(next_item) + '_' + str(photo[3])
                 else:
-                    photo_url = photo
-            message = f"Кандидат в поиске:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nФотографии: \n{photo_url}"
+                    attachment = 'photo' + str(next_item) + '_' + str(photo[3])
+            url = f'https://vk.com/id{next_item}'
+            message = f"Кандидат в поиске:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
             keyboard = create_keyboard(command.strip().lower())
             # Сохраняем в памяти ID последнего выведенного кандидата
             self.user_results.add_user(str(self._USER_DATA['id']) + 'last')
             self.user_results.add_data(str(self._USER_DATA['id']) + 'last', next_item)
-            return message, keyboard
+            return message, keyboard, attachment
 
         # 3 'Добавить в избранное'
         elif command.strip().upper() == self._COMMANDS[3]:
@@ -271,7 +273,8 @@ class VkBot:
             last_name = next_item['last_name']
             keyboard = create_keyboard(command.strip().lower())
             message = f'Кандидат {first_name} {last_name} добавлен в избранное.'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 4 'Добавить в черный список'
         elif command.strip().upper() == self._COMMANDS[4]:
@@ -280,67 +283,78 @@ class VkBot:
             last_name = next_item['last_name']
             keyboard = create_keyboard(command.strip().lower())
             message = f'Кандидат {first_name} {last_name} добавлен в черный список.'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 5 'Лайк/дизлайк'
         elif command.strip().upper() == self._COMMANDS[5]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет лайк/дизлайк'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 6 'Отправить сообщение'
         elif command.strip().upper() == self._COMMANDS[6]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет отправить сообщение'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 7 'Вернуться в начало'
         elif command.strip().upper() == self._COMMANDS[7]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'Возвращаемся в самое начало'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 8 "РАБОТА С ИЗБРАННЫМИ"
         elif command.strip().upper() == self._COMMANDS[8]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет работа с избранным'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 9 'Перенести в черный список'
         elif command.strip().upper() == self._COMMANDS[9]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет перенести в черный список'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 10 'Следующий в избранном'
         elif command.strip().upper() == self._COMMANDS[10]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет следующий в избранном'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 11 "РАБОТА С ЧЕРНЫМ СПИСКОМ"
         elif command.strip().upper() == self._COMMANDS[11]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет работа с черным списком'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 12 'Перенести в избранное'
         elif command.strip().upper() == self._COMMANDS[12]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет перенести в избранное'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 13'Следующий в черном списке'
         elif command.strip().upper() == self._COMMANDS[13]:
             keyboard = create_keyboard(command.strip().lower())
             message = 'тут будет следующий в черном списке'
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         # 14 "ПОКА"
         elif command.strip().upper() == self._COMMANDS[14]:
             keyboard = create_keyboard(command.strip().lower())
             message = "Пока, {self._USER_DATA['first_name']}!"
-            return message, keyboard
+            attachment = ''
+            return message, keyboard, attachment
 
         else:
             return "Не понимаю о чем вы..."
@@ -356,6 +370,7 @@ class VkBot:
         ph_urls = []
         ph_likes = []
         ph_type = []
+        ph_id = []
         photos = self._user_photos('profile', user_id)
         if self.safe_get_from_dict(photos, 'error') == '':
             if photos['response']['count'] > 0:
@@ -364,8 +379,9 @@ class VkBot:
                     ph_urls.append(ph['sizes'][-1]['url'])
                     ph_likes.append(ph['likes']['count'])
                     ph_type.append(ph['sizes'][-1]['type'])
+                    ph_id.append(ph['id'])
                 # Combine and sort photos based on likes.
-                ph_urls_sorted = list(zip(ph_likes, ph_urls, ph_type))
+                ph_urls_sorted = list(zip(ph_likes, ph_urls, ph_type, ph_id))
                 ph_urls_sorted = sorted(ph_urls_sorted, reverse=True)
                 return ph_urls_sorted[:number_ph]
             else:
