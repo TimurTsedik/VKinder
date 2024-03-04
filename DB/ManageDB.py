@@ -38,13 +38,7 @@ class ManageDB:
                      surname=user_info['surname'],
                      age=user_info['age'],
                      sex=user_info['sex'],
-                     city=user_info['city'],
-                     foto_a_1=user_info['foto_a_1'],
-                     foto_a_2=user_info['foto_a_2'],
-                     foto_a_3=user_info['foto_a_3'],
-                     foto_fr_1=user_info['foto_fr_1'],
-                     foto_fr_2=user_info['foto_fr_2'],
-                     foto_fr_3=user_info['foto_fr_3']))
+                     city=user_info['city']))
             self._session.commit()
             return True
 
@@ -149,9 +143,7 @@ class ManageDB:
         x_ret = self._session.query(User).where(User.vk_id == vk_id)
         for x in x_ret.all():
             return {"name": x.name, "surname": x.surname, "age": x.age, "sex": x.sex, "city": x.city, "vk_id": x.vk_id,
-                    "date_create": x.date_create,
-                    "foto_a_1": x.foto_a_1, "foto_a_2": x.foto_a_2, "foto_a_3": x.foto_a_3, "foto_fr_1": x.foto_fr_1,
-                    "foto_fr_2": x.foto_fr_2, "foto_fr_3": x.foto_fr_3}
+                    "date_create": x.date_create}
         return {}
 
 
@@ -162,13 +154,10 @@ if __name__ == '__main__':
     DB = ManageDB(db_name=config['DB']['DB_name'], user_name=config['DB']['DB_user'],
                   user_password=config['DB']['DB_password'])
 
-    DB.add_user({"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "1", "foto_a_1": "1",
-                 "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
-    DB.add_user({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2", "foto_a_1": "1",
-                 "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+    DB.add_user({"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "1"})
+    DB.add_user({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2"})
     DB.add_user(
-        {"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3", "foto_a_1": "1", "foto_a_2": "2",
-         "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+        {"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3"})
     DB.actualize_user({"name": "Vasya", "surname": "Pupkin", "age": 38, "sex": 1, "city": 1, "vk_id": "1"})
     DB.add_favorites("1", "2")
     # DB.add_blacklist("1", "3")
