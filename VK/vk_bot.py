@@ -8,6 +8,19 @@ class VkBot:
     base_url = 'https://api.vk.com/method/'
 
     def __init__(self, user_id, token_1, token_2, user_results, db_object):
+        """
+        Initializes the class with the provided user_id, token_1, token_2, user_results, and db_object.
+
+        Parameters:
+            user_id (int): The user ID.
+            token_1 (str): The first token.
+            token_2 (str): The second token.
+            user_results: The user results.
+            db_object: The database object.
+
+        Returns:
+            None
+        """
         self.token_1 = token_1
         self.token_2 = token_2
         self._USER_ID = user_id
@@ -28,6 +41,16 @@ class VkBot:
         self.dbObject = db_object
 
     def search_boy_girl_friends(self, user_data: dict):
+        """
+        Performs a search for potential boy or girl friends based on the provided user_data.
+
+        Args:
+            self: the object instance
+            user_data (dict): the user data containing information such as sex, age, and city
+
+        Returns:
+            str: a message indicating the success or failure of the search
+        """
         url = build_url(self.base_url, 'users.search?')
         params = get_common_params(self.token_2)
         if user_data['sex'] == 0:
@@ -97,6 +120,10 @@ class VkBot:
         return f"Найдены записи о {_} пользователях для знакомства. Для просмотра нажмите кнопку 'Следующий в поиске'"
 
     def execute_command(self, command: str):
+        """
+        A function to execute a command based on the provided input. It checks the command and
+        returns the appropriate message, keyboard, and attachment based on the command passed as input.
+        """
         # проверка наличия пользователя в базе
         if not self.dbObject.if_user_in_db(self._USER_DATA['id']):
             command = 'ПРИВЕТ'

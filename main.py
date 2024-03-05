@@ -10,6 +10,15 @@ from DB.ManageDB import ManageDB
 
 
 def get_tokens(file_name: str = "config.ini"):
+    """
+    Retrieves tokens and database credentials from the specified or default configuration file.
+
+    Args:
+        file_name (str): The name of the configuration file to read. Defaults to "config.ini".
+
+    Returns:
+        tuple: A tuple containing group_token, personal_token, db_name, db_user_name, and db_user_password.
+    """
     config = configparser.ConfigParser()
     config.read(file_name)
     group_token = config['VK']['group_token']
@@ -22,6 +31,16 @@ def get_tokens(file_name: str = "config.ini"):
 
 
 def start_vk_bot(token_1, token_2):
+    """
+    Function to start a VK bot and handle incoming messages.
+
+    Args:
+        token_1 (str): The first token for authentication.
+        token_2 (str): The second token for authentication.
+
+    Returns:
+        None
+    """
     vk = vk_api.VkApi(token=token_1)
     longpoll = VkLongPoll(vk)
 
