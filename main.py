@@ -2,7 +2,7 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from random import randrange
 
-from vk_bot import VkBot
+from VK.vk_bot import VkBot
 from VK.user_storage import UserResultsStorage
 
 import configparser
