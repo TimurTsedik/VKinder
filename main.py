@@ -26,12 +26,10 @@ def start_vk_bot(token_1, token_2):
     vk = vk_api.VkApi(token=token_1)
     longpoll = VkLongPoll(vk)
 
-
-
     def write_msg(user_id, mess, keyboard=None, attachment=None):
         if keyboard is not None:
             vk.method('messages.send', {
-            'user_id': user_id, 'message': mess, 'random_id': randrange(10 ** 7), 'keyboard': keyboard, 'attachment': attachment})
+                'user_id': user_id, 'message': mess, 'random_id': randrange(10 ** 7), 'keyboard': keyboard, 'attachment': attachment})
         else:
             vk.method('messages.send', {
                 'user_id': user_id, 'message': mess, 'random_id': randrange(10 ** 7), 'attachment': attachment})
@@ -45,8 +43,8 @@ def start_vk_bot(token_1, token_2):
                 write_msg(event.user_id, message, keyboard, attachment)
 
 
-
 if __name__ == "__main__":
     tok_1, tok_2, db_name, db_user_name, db_user_password = get_tokens()
-    DB = ManageDB(db_name=db_name, user_name=db_user_name, user_password=db_user_password)
+    DB = ManageDB(db_name=db_name, user_name=db_user_name,
+                  user_password=db_user_password)
     start_vk_bot(tok_1, tok_2)

@@ -4,52 +4,117 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 import re
 import random
 
+
 def create_keyboard(response):
     keyboard = VkKeyboard()
 
     if response == 'привет':
         keyboard.add_button('Поиск', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Работа с избранными', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Работа с черным списком', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Работа с избранными',
+                            color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
+        keyboard.add_button('Работа с черным списком',
+                            color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Пока', color=VkKeyboardColor.NEGATIVE)
 
     elif response == 'Не удалось найти пользователей для знакомств':
-        keyboard.add_button('Проверьте свой возраст', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Проверьте свой пол', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Проверьте свой город', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Вернуться в начало', color=VkKeyboardColor.NEGATIVE)
+        keyboard.add_button('Проверьте свой возраст',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Проверьте свой пол',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Проверьте свой город',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Вернуться в начало',
+                            color=VkKeyboardColor.NEGATIVE)
 
     elif len(re.findall(r'Найдены записи о', response)) > 0:
-        keyboard.add_button('Следующий в поиске', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Следующий в поиске',
+                            color=VkKeyboardColor.POSITIVE)
 
     elif response == 'работа с избранными':
-        keyboard.add_button('Перенести в черный список', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Список избранных целиком',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Следующий в избранном',
+                            color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
+        keyboard.add_button('Вернуться в начало',
+                            color=VkKeyboardColor.NEGATIVE)
+
+    elif response == 'следующий в избранном':
+        keyboard.add_button('Перенести в черный список',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Следующий в избранном',
+                            color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
         keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Следующий в избранном', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Вернуться в начало', color=VkKeyboardColor.NEGATIVE)
+        keyboard.add_button('Вернуться в начало',
+                            color=VkKeyboardColor.NEGATIVE)
 
     elif response == 'работа с черным списком':
-        keyboard.add_button('Перенести в избранное', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Следующий в черном списке', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Вернуться в начало', color=VkKeyboardColor.NEGATIVE)
+
+        keyboard.add_button('Черный список целиком',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Следующий в черном списке',
+                            color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
+        keyboard.add_button('Вернуться в начало',
+                            color=VkKeyboardColor.NEGATIVE)
+
+    elif response == 'следующий в черном списке':
+        keyboard.add_button('Перенести в избранное',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Следующий в черном списке',
+                            color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
+        keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Вернуться в начало',
+                            color=VkKeyboardColor.NEGATIVE)
 
     elif response == 'поиск':
-        keyboard.add_button('Следующий в поиске', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Следующий в поиске',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Работа с избранными',
+                            color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
+        keyboard.add_button('Работа с черным списком',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Пока', color=VkKeyboardColor.NEGATIVE)
 
     elif len(re.findall(r'(следующий в поиске)|(в избранное)|(в черный список)', response)) > 0:
+        keyboard.add_button('Следующий в поиске',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
         keyboard.add_button('В избранное', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('В черный список', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Следующий в поиске', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_line()
-        keyboard.add_button('Вернуться в начало', color=VkKeyboardColor.NEGATIVE)
 
-    else:
-        # Если непонятно, то отрабатываем ПРИВЕТ
-        keyboard.add_button('Поиск', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Работа с избранными', color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Работа с черным списком', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_line()
+        keyboard.add_button('Работа с избранными',
+                            color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Работа с черным списком',
+                            color=VkKeyboardColor.POSITIVE)
+
+        keyboard.add_line()
+        keyboard.add_button('Вернуться в начало',
+                            color=VkKeyboardColor.NEGATIVE)
         keyboard.add_button('Пока', color=VkKeyboardColor.NEGATIVE)
+
+    elif response == 'пока':
+        keyboard.add_button('Привет', color=VkKeyboardColor.POSITIVE)
+
+    # else:
+    #     # Если непонятно, то отрабатываем ПРИВЕТ
+    #     keyboard.add_button('Поиск', color=VkKeyboardColor.POSITIVE)
+    #     keyboard.add_button('Работа с избранными', color=VkKeyboardColor.POSITIVE)
+    #     keyboard.add_button('Работа с черным списком', color=VkKeyboardColor.POSITIVE)
+    #     keyboard.add_button('Пока', color=VkKeyboardColor.NEGATIVE)
 
     keyboard = keyboard.get_keyboard()
     return keyboard
@@ -58,6 +123,7 @@ def create_keyboard(response):
 class UserResultsStorage:
     def __init__(self):
         self.users = {}
+        self.current_user = {}
 
     def add_user(self, user_id):
         if user_id not in self.users:
@@ -95,11 +161,12 @@ class VkBot:
             "ПРИВЕТ",
             "ПОИСК",
             "СЛЕДУЮЩИЙ В ПОИСКЕ",
-                'В ИЗБРАННОЕ', 'В ЧЕРНЫЙ СПИСОК', 'ЛАЙК/ДИЗЛАЙК', 'ВЕРНУТЬСЯ В НАЧАЛО',
+            'В ИЗБРАННОЕ', 'В ЧЕРНЫЙ СПИСОК', 'ЛАЙК/ДИЗЛАЙК', 'ВЕРНУТЬСЯ В НАЧАЛО',
             "РАБОТА С ИЗБРАННЫМИ",
-                'ПЕРЕНЕСТИ В ЧЕРНЫЙ СПИСОК', 'СЛЕДУЮЩИЙ В ИЗБРАННОМ',
+            'ПЕРЕНЕСТИ В ЧЕРНЫЙ СПИСОК', 'СЛЕДУЮЩИЙ В ИЗБРАННОМ',
             "РАБОТА С ЧЕРНЫМ СПИСКОМ",
-                'ПЕРЕНЕСТИ В ИЗБРАННОЕ', 'СЛЕДУЮЩИЙ В ЧЕРНОМ СПИСКЕ',
+            'ПЕРЕНЕСТИ В ИЗБРАННОЕ', 'СЛЕДУЮЩИЙ В ЧЕРНОМ СПИСКЕ',
+            "СПИСОК ИЗБРАННЫХ ЦЕЛИКОМ", "ЧЕРНЫЙ СПИСОК ЦЕЛИКОМ",
             "ПОКА"]
         self.user_results = user_results
         self.dbObject = db_object
@@ -198,7 +265,8 @@ class VkBot:
             if self.safe_get_from_dict(item, 'bdate') == '':
                 age = 0
             else:
-                age = self.calculate_age(self.safe_get_from_dict(item, 'bdate'))
+                age = self.calculate_age(
+                    self.safe_get_from_dict(item, 'bdate'))
             user_dict = {}
             user_dict = {
                 'vk_id': str(item['id']),
@@ -219,7 +287,8 @@ class VkBot:
                 'music': self.safe_get_from_dict(item, 'music')
             }
             if not self.dbObject.add_user_db(user_dict):
-                print(f"Не удалось добавить пользователя {user_dict['vk_id']} в базу данных")
+                print(
+                    f"Не удалось добавить пользователя {user_dict['vk_id']} в базу данных")
             else:
                 self.user_results.add_data(self._USER_DATA['id'], item['id'])
                 self.user_results.randomize_data(self._USER_DATA['id'])
@@ -232,16 +301,19 @@ class VkBot:
             photos = self.get_user_most_liked_photos(self._USER_DATA['id'])
             user_dict = {}
             prefix = 'photo' + str(self._USER_DATA['id']) + '_'
-            photo1 = str(self.safe_get_from_list(self.safe_get_from_list(photos, 0), 3))
-            photo2 = str(self.safe_get_from_list(self.safe_get_from_list(photos, 1), 3))
-            photo3 = str(self.safe_get_from_list(self.safe_get_from_list(photos, 2), 3))
+            photo1 = str(self.safe_get_from_list(
+                self.safe_get_from_list(photos, 0), 3))
+            photo2 = str(self.safe_get_from_list(
+                self.safe_get_from_list(photos, 1), 3))
+            photo3 = str(self.safe_get_from_list(
+                self.safe_get_from_list(photos, 2), 3))
             user_dict = {
                 'vk_id': str(self._USER_DATA['id']),
                 'name': self.safe_get_from_dict(self._USER_DATA, 'first_name'),
-                'surname': self.safe_get_from_dict(self._USER_DATA,'last_name'),
+                'surname': self.safe_get_from_dict(self._USER_DATA, 'last_name'),
                 'age': self.safe_get_from_dict(self._USER_DATA, 'age'),
-                'sex': self.safe_get_from_dict(self._USER_DATA,'sex'),
-                'city': self.safe_get_from_dict(self.safe_get_from_dict(self._USER_DATA,'city'), 'title'),
+                'sex': self.safe_get_from_dict(self._USER_DATA, 'sex'),
+                'city': self.safe_get_from_dict(self.safe_get_from_dict(self._USER_DATA, 'city'), 'title'),
                 'foto_a_1': prefix + photo1 if photo1 != '' else '',
                 'foto_a_2': prefix + photo2 if photo2 != '' else '',
                 'foto_a_3': prefix + photo3 if photo3 != '' else '',
@@ -282,7 +354,8 @@ class VkBot:
             attachment = ''
             for photo in self.get_user_most_liked_photos(next_item):
                 if attachment != '':
-                    attachment += ',photo' + str(next_item) + '_' + str(photo[3])
+                    attachment += ',photo' + \
+                        str(next_item) + '_' + str(photo[3])
                 else:
                     attachment = 'photo' + str(next_item) + '_' + str(photo[3])
             url = f'https://vk.com/id{next_item}'
@@ -297,26 +370,39 @@ class VkBot:
             self.dbObject.actualize_user(next_user_pics)
             # Сохраняем в памяти ID последнего выведенного кандидата
             self.user_results.add_user(str(self._USER_DATA['id']) + 'last')
-            self.user_results.add_data(str(self._USER_DATA['id']) + 'last', next_item)
+            self.user_results.add_data(
+                str(self._USER_DATA['id']) + 'last', next_item)
+
+            # Сохраняем id последнего просмотренного пользователя
+            self.user_results.current_user[self._USER_DATA['id']] = next_item
             return message, keyboard, attachment
 
-        # 3 'Добавить в избранное'
+        # 3 'В избранное'
         elif command.strip().upper() == self._COMMANDS[3]:
-            next_item = self.user_results.get_data(self._USER_DATA['id'])
-            first_name = next_item['first_name']
-            last_name = next_item['last_name']
-            keyboard = create_keyboard(command.strip().lower())
-            message = f'Кандидат {first_name} {last_name} добавлен в избранное.'
+
+            cur_user_id = self.user_results.current_user[self._USER_DATA['id']]
+            result = self.dbObject.add_favorites(
+                str(self._USER_ID), cur_user_id)
+
+            if not result:
+                message = 'Пользователь уже в избранных'
+            else:
+                message = f'Пользователь с id {cur_user_id} помещен в список избранных'
+            keyboard = create_keyboard("поиск")
             attachment = ''
             return message, keyboard, attachment
 
-        # 4 'Добавить в черный список'
+         # 4 'В черный список'
         elif command.strip().upper() == self._COMMANDS[4]:
-            next_item = self.user_results.get_data(self._USER_DATA['id'])
-            first_name = next_item['first_name']
-            last_name = next_item['last_name']
-            keyboard = create_keyboard(command.strip().lower())
-            message = f'Кандидат {first_name} {last_name} добавлен в черный список.'
+
+            cur_user_id = self.user_results.current_user[self._USER_DATA['id']]
+            result = self.dbObject.add_blacklist(
+                str(self._USER_ID), cur_user_id)
+            if not result:
+                message = 'Пользователь уже в черном списке'
+            else:
+                message = f'Пользователь с id {cur_user_id} помещен в черный список'
+            keyboard = create_keyboard("поиск")
             attachment = ''
             return message, keyboard, attachment
 
@@ -329,70 +415,204 @@ class VkBot:
 
         # 6 'Вернуться в начало'
         elif command.strip().upper() == self._COMMANDS[6]:
-            keyboard = create_keyboard(command.strip().lower())
+            keyboard = create_keyboard("привет")
             message = 'Возвращаемся в самое начало'
             attachment = ''
             return message, keyboard, attachment
 
         # 7 "РАБОТА С ИЗБРАННЫМИ"
         elif command.strip().upper() == self._COMMANDS[7]:
-            keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет работа с избранным'
+
+            self.user_results.current_user[self._USER_DATA['id']] = None
+            list_favorits = self.dbObject.get_list_favorites(
+                str(self._USER_ID))
+            if not list_favorits:
+                message = 'Ваш список избранных пуст'
+                keyboard = create_keyboard('привет')
+            else:
+                message = f'В вашем списке избранных {len(list_favorits)} пользователей'
+                keyboard = create_keyboard(command.strip().lower())
             attachment = ''
             return message, keyboard, attachment
 
         # 8 'Перенести в черный список'
         elif command.strip().upper() == self._COMMANDS[8]:
-            keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет перенести в черный список'
+            cur_user_id = self.user_results.current_user[self._USER_DATA['id']]
+
+            result = self.dbObject.add_blacklist(
+                str(self._USER_ID), cur_user_id)
+            if not result:
+                message = 'Пользователь уже в черном списке'
+            else:
+                message = f'Пользователь с id {cur_user_id} помещен в черный список'
+            keyboard = create_keyboard("работа с избранными")
             attachment = ''
+
             return message, keyboard, attachment
 
-        # 9 'Следующий в избранном'
+       # 9 'СЛЕДУЮЩИЙ В ИЗБРАННОМ'
         elif command.strip().upper() == self._COMMANDS[9]:
-            keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет следующий в избранном'
+
+            list_favorits = self.dbObject.get_list_favorites(
+                str(self._USER_ID))
             attachment = ''
+            if not list_favorits:
+                message = 'Ваш список избранных пуст'
+                keyboard = create_keyboard('привет')
+            else:
+                keyboard = create_keyboard(command.strip().lower())
+                cur_user_data = self.dbObject.get_user_by_vk_id(
+                    list_favorits[0])
+                self.dbObject.remove_favorites(
+                    str(self._USER_ID), cur_user_data["vk_id"])
+                first_name = cur_user_data["name"]
+                last_name = cur_user_data["surname"]
+                age = cur_user_data["age"]
+
+                self.user_results.current_user[self._USER_DATA['id']
+                                               ] = cur_user_data["vk_id"]
+
+                for photo in self.get_user_most_liked_photos(cur_user_data["vk_id"]):
+                    if attachment != '':
+                        attachment += ',photo' + \
+                            str(cur_user_data["vk_id"]) + '_' + str(photo[3])
+                    else:
+                        attachment = 'photo' + \
+                            str(cur_user_data["vk_id"]) + '_' + str(photo[3])
+                url = f'https://vk.com/id{cur_user_data["vk_id"]}'
+                message = f"Следующий в избранном:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+
             return message, keyboard, attachment
 
-        # 10 "РАБОТА С ЧЕРНЫМ СПИСКОМ"
+       # 10 "РАБОТА С ЧЕРНЫМ СПИСКОМ"
         elif command.strip().upper() == self._COMMANDS[10]:
-            keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет работа с черным списком'
+
+            self.user_results.current_user[self._USER_DATA['id']] = None
+            list_blacklist = self.dbObject.get_list_blacklist(
+                str(self._USER_ID))
+            if not list_blacklist:
+                message = 'Ваш черный список пуст'
+                keyboard = create_keyboard('привет')
+            else:
+                message = f'В вашем черном списке {len(list_blacklist)} пользователей'
+                keyboard = create_keyboard(command.strip().lower())
             attachment = ''
             return message, keyboard, attachment
 
         # 11 'Перенести в избранное'
         elif command.strip().upper() == self._COMMANDS[11]:
-            keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет перенести в избранное'
+
+            cur_user_id = self.user_results.current_user[self._USER_DATA['id']]
+
+            result = self.dbObject.add_favorites(
+                str(self._USER_ID), cur_user_id)
+            if not result:
+                message = 'Пользователь уже в избранных'
+            else:
+                message = f'Пользователь с id {cur_user_id} помещен в избранные'
+            keyboard = create_keyboard("работа с черным списком")
             attachment = ''
+
             return message, keyboard, attachment
 
         # 12'Следующий в черном списке'
         elif command.strip().upper() == self._COMMANDS[12]:
-            keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет следующий в черном списке'
+
+            list_blacklist = self.dbObject.get_list_blacklist(
+                str(self._USER_ID))
             attachment = ''
+            if not list_blacklist:
+                message = 'Ваш черный список пуст'
+                keyboard = create_keyboard('привет')
+            else:
+                keyboard = create_keyboard(command.strip().lower())
+                cur_user_data = self.dbObject.get_user_by_vk_id(
+                    list_blacklist[0])
+                self.dbObject.remove_blacklist(
+                    str(self._USER_ID), cur_user_data["vk_id"])
+                first_name = cur_user_data["name"]
+                last_name = cur_user_data["surname"]
+                age = cur_user_data["age"]
+
+                self.user_results.current_user[self._USER_DATA['id']
+                                               ] = cur_user_data["vk_id"]
+
+                for photo in self.get_user_most_liked_photos(cur_user_data["vk_id"]):
+                    if attachment != '':
+                        attachment += ',photo' + \
+                            str(cur_user_data["vk_id"]) + '_' + str(photo[3])
+                    else:
+                        attachment = 'photo' + \
+                            str(cur_user_data["vk_id"]) + '_' + str(photo[3])
+                url = f'https://vk.com/id{cur_user_data["vk_id"]}'
+                message = f"Следующий в черном списке:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+
             return message, keyboard, attachment
 
-        # 13 "ПОКА"
+        # 13 "СПИСОК ИЗБРАННЫХ ЦЕЛИКОМ"
         elif command.strip().upper() == self._COMMANDS[13]:
-            keyboard = create_keyboard(command.strip().lower())
+            list_favorits = self.dbObject.get_list_favorites(
+                str(self._USER_ID))
+            attachment = ''
+            if not list_favorits:
+                message = 'Ваш список избранных пуст'
+                keyboard = create_keyboard('привет')
+            else:
+                keyboard = create_keyboard("работа с избранными")
+                all_favorits = []
+                for cur_user_id in list_favorits:
+                    cur_user_data = self.dbObject.get_user_by_vk_id(
+                        cur_user_id)
+                    first_name = cur_user_data["name"]
+                    last_name = cur_user_data["surname"]
+                    age = cur_user_data["age"]
+                    url = f'https://vk.com/id{cur_user_data["vk_id"]}'
+                    favorite = f"Следующий в избранном:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+                    all_favorits.append(favorite)
+                message = "\n\n".join(all_favorits)
+            return message, keyboard, attachment
+
+        # 14 "ЧЕРНЫЙ СПИСОК ЦЕЛИКОМ"
+        elif command.strip().upper() == self._COMMANDS[14]:
+            list_blacklist = self.dbObject.get_list_blacklist(
+                str(self._USER_ID))
+            attachment = ''
+            if not list_blacklist:
+                message = 'Ваш черный список пуст'
+                keyboard = create_keyboard('привет')
+            else:
+                keyboard = create_keyboard("работа с черным списком")
+                all_black_users = []
+                for cur_user_id in list_blacklist:
+                    cur_user_data = self.dbObject.get_user_by_vk_id(
+                        cur_user_id)
+                    first_name = cur_user_data["name"]
+                    last_name = cur_user_data["surname"]
+                    age = cur_user_data["age"]
+                    url = f'https://vk.com/id{cur_user_data["vk_id"]}'
+                    black_user = f"Следующий в черном списке:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+                    all_black_users.append(black_user)
+                message = "\n\n".join(all_black_users)
+            return message, keyboard, attachment
+
+        # 15 "ПОКА"
+        elif command.strip().upper() == self._COMMANDS[15]:
+            keyboard = create_keyboard("пока")
             message = f"Пока, {self._USER_DATA['first_name']}!"
             attachment = ''
             return message, keyboard, attachment
 
         else:
-            keyboard = create_keyboard('привет')
-            message = f"Не понимаю о чем вы..., {self._USER_DATA['first_name']}!"
-            attachment = ''
+            message = "Не понимаю о чем вы..."
+            keyboard = create_keyboard("привет")
+            attachment = ""
             return message, keyboard, attachment
 
     def _user_photos(self, album: str, user_id: str) -> dict:
         # Retrieve user photos from a specified album.
         params = self.get_common_params()
-        params.update({'owner_id': user_id, 'album_id': album, 'extended': 1, 'count': '1000'})
+        params.update({'owner_id': user_id, 'album_id': album,
+                      'extended': 1, 'count': '1000'})
         response = requests.get(self._build_url('photos.get'), params=params)
         return response.json()
 
