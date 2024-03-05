@@ -120,7 +120,7 @@ class ManageDB:
         user_id кто удаляет из базы\n
         bl_id кого удаляют из базы\n
         Возвращает True если удалено\n"""
-        self._session.query(BlackList).where(BlackList.user_id == user_id, BlackList.user_black_id == bl_id).delete()
+        self._session.query(BlackList).where(BlackList.user_id == str(user_id), BlackList.user_black_id == str(bl_id)).delete()
         self._session.commit()
         return True
 
@@ -129,7 +129,7 @@ class ManageDB:
         Возвращает не пустой LIST, если все хорошо."""
         fav_list = []
         try:
-            favorite_ids = self._session.query(Favorite).where(Favorite.user_id == vk_id)
+            favorite_ids = self._session.query(Favorite).where(Favorite.user_id == str(vk_id))
             for x in favorite_ids.all():
                 fav_list.append(x.user_fav_id)
             return fav_list
@@ -141,23 +141,39 @@ class ManageDB:
         Возвращает не пустой LIST, если все хорошо."""
         bl_list = []
         try:
-            blacklist_ids = self._session.query(BlackList).where(BlackList.user_id == vk_id)
+            blacklist_ids = self._session.query(BlackList).where(BlackList.user_id == str(vk_id))
             for x in blacklist_ids.all():
                 bl_list.append(x.user_black_id)
             return bl_list
         except:
             return bl_list
+    def if_user_in_blacklist(self, vk_id_asking: str, vk_id_ckecking: str) -> bool:
+        """Проверка на вхождение в черный список\n
+        Возвращает True если юзер в черном списке\n"""
+        if vk_id_ckecking in self.get_list_blacklist(vk_id_asking):
+            return True
+        else:
+            return False
 
     def get_user_by_vk_id(self, vk_id: str) -> dict:
         """Получение словаря с данными юзера\n
         Возвращает не пустой LIST, если все хорошо."""
-        x_ret = self._session.query(User).where(User.vk_id == vk_id)
+        x_ret = self._session.query(User).where(User.vk_id == str(vk_id))
         for x in x_ret.all():
             return {"name": x.name, "surname": x.surname, "age": x.age, "sex": x.sex, "city": x.city, "vk_id": x.vk_id,
                     "date_create": x.date_create,
                     "foto_a_1": x.foto_a_1, "foto_a_2": x.foto_a_2, "foto_a_3": x.foto_a_3, "foto_fr_1": x.foto_fr_1,
                     "foto_fr_2": x.foto_fr_2, "foto_fr_3": x.foto_fr_3}
         return {}
+
+    def if_user_in_db(self, vk_id: str) -> bool:
+        """Проверка на существование в базе\n
+        Возвращает True если юзер в базе\n"""
+        x_ret = self._session.query(User).where(User.vk_id == str(vk_id))
+        if len(x_ret.all()) > 0:
+            return True
+        else:
+            return False
 
 
 # Тест базы

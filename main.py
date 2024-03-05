@@ -2,9 +2,8 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from random import randrange
 
-from DB.ManageDB import ManageDB
 from vk_bot import VkBot
-from vk_bot import UserResultsStorage
+from VK.user_storage import UserResultsStorage
 
 import configparser
 from DB.ManageDB import ManageDB
