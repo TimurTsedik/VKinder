@@ -1,7 +1,5 @@
 .idea/
 .venv/
-.gitignore
 config.ini
-requirements.txt
 DB/__pycache__/
 __pycache__/
