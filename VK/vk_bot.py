@@ -36,7 +36,7 @@ class VkBot:
             "РАБОТА С ЧЕРНЫМ СПИСКОМ",
             'ПЕРЕНЕСТИ В ИЗБРАННОЕ', 'СЛЕДУЮЩИЙ В ЧЕРНОМ СПИСКЕ',
             "СПИСОК ИЗБРАННЫХ ЦЕЛИКОМ", "ЧЕРНЫЙ СПИСОК ЦЕЛИКОМ",
-            "ПОКА"]
+            "ПОКА", "УДАЛИТЬ ИЗ ИЗБРАННЫХ", "УДАЛИТЬ ИЗ ЧЕРНОГО СПИСКА"]
         self.user_results = user_results
         self.dbObject = db_object
 
@@ -301,8 +301,8 @@ class VkBot:
                 keyboard = create_keyboard(command.strip().lower())
                 cur_user_data = self.dbObject.get_user_by_vk_id(
                     list_favorits[0])
-                self.dbObject.remove_favorites(
-                    str(self._USER_ID), cur_user_data["vk_id"])
+                # self.dbObject.remove_favorites(
+                #     str(self._USER_ID), cur_user_data["vk_id"])
                 first_name = cur_user_data["name"]
                 last_name = cur_user_data["surname"]
                 age = cur_user_data["age"]
@@ -366,8 +366,8 @@ class VkBot:
                 keyboard = create_keyboard(command.strip().lower())
                 cur_user_data = self.dbObject.get_user_by_vk_id(
                     list_blacklist[0])
-                self.dbObject.remove_blacklist(
-                    str(self._USER_ID), cur_user_data["vk_id"])
+                # self.dbObject.remove_blacklist(
+                #     str(self._USER_ID), cur_user_data["vk_id"])
                 first_name = cur_user_data["name"]
                 last_name = cur_user_data["surname"]
                 age = cur_user_data["age"]
@@ -440,10 +440,40 @@ class VkBot:
             attachment = ''
             return message, keyboard, attachment
 
+
+
+        # 16 "УДАЛИТЬ ИЗ ИЗБРАННЫХ"
+        elif command.strip().upper() == self._COMMANDS[16]:
+            list_favorits = self.dbObject.get_list_favorites(
+                str(self._USER_ID))
+            cur_user_data = self.dbObject.get_user_by_vk_id(
+                list_favorits[0])
+            self.dbObject.remove_favorites(
+                str(self._USER_ID), cur_user_data["vk_id"])
+            keyboard = create_keyboard("работа с избранными")
+            attachment = ''
+            message = f'Пользователь с id {cur_user_data["vk_id"]} удален из списка избранных'
+            return message, keyboard, attachment
+
+
+        # 17 "УДАЛИТЬ ИЗ ЧЕРНОГО СПИСКА"
+        elif command.strip().upper() == self._COMMANDS[17]:
+            list_blacklist = self.dbObject.get_list_blacklist(
+                str(self._USER_ID))
+            cur_user_data = self.dbObject.get_user_by_vk_id(
+                list_blacklist[0])
+            self.dbObject.remove_blacklist(
+                str(self._USER_ID), cur_user_data["vk_id"])
+            keyboard = create_keyboard("работа с черным списком")
+            attachment = ''
+            message = f'Пользователь с id {cur_user_data["vk_id"]} удален из списка избранных'
+            return message, keyboard, attachment
+
+
+
+
         else:
             message = "Не понимаю о чем вы..."
             keyboard = create_keyboard("привет")
             attachment = ""
             return message, keyboard, attachment
-
-

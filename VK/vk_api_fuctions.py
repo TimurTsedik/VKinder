@@ -7,7 +7,10 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 def create_keyboard(response):
     """
-    This function creates a custom keyboard for a VKontakte (VK) chatbot based on the user response. It takes a single parameter, 'response', which represents the user input. The function constructs different keyboard layouts based on the user's input and returns the custom keyboard as a result.
+    This function creates a custom keyboard for a VKontakte (VK) chatbot based on the user response.
+    It takes a single parameter, 'response', which represents the user input.
+    The function constructs different keyboard layouts based on the user's
+    input and returns the custom keyboard as a result.
     """
     keyboard = VkKeyboard()
 
@@ -52,7 +55,7 @@ def create_keyboard(response):
                             color=VkKeyboardColor.POSITIVE)
 
         keyboard.add_line()
-        keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Удалить из избранных', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Вернуться в начало',
                             color=VkKeyboardColor.NEGATIVE)
 
@@ -74,7 +77,7 @@ def create_keyboard(response):
                             color=VkKeyboardColor.POSITIVE)
 
         keyboard.add_line()
-        keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button('Удалить из черного списка', color=VkKeyboardColor.POSITIVE)
         keyboard.add_button('Вернуться в начало',
                             color=VkKeyboardColor.NEGATIVE)
 
@@ -92,7 +95,7 @@ def create_keyboard(response):
     elif len(re.findall(r'(следующий в поиске)|(в избранное)|(в черный список)', response)) > 0:
         keyboard.add_button('Следующий в поиске',
                             color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
+        # keyboard.add_button('Лайк/дизлайк', color=VkKeyboardColor.POSITIVE)
 
         keyboard.add_line()
         keyboard.add_button('В избранное', color=VkKeyboardColor.POSITIVE)
