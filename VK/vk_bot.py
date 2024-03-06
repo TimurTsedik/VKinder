@@ -85,7 +85,7 @@ class VkBot:
             return f"Не удалось найти пользователей для знакомств"
         self.user_results.add_user(self._USER_DATA['id'])
         # очистка от предыдущих результатов поиска
-        self.user_results.erase_data(self._USER_DATA['id'])
+        # self.user_results.erase_data(self._USER_DATA['id'])
         for _, item in enumerate(items):
             if safe_get_from_dict(item, 'bdate') == '':
                 age = 0
