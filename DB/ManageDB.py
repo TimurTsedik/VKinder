@@ -34,21 +34,21 @@ class ManageDB:
         else:
             self._session.add(
                 User(vk_id=user_info['vk_id'],
-                    name=user_info['name'],
-                    surname=user_info['surname'],
-                    age=user_info['age'],
-                    sex=user_info['sex'],
-                    city=user_info['city'],
-                    foto_a_1=user_info['foto_a_1'],
-                    foto_a_2=user_info['foto_a_2'],
-                    foto_a_3=user_info['foto_a_3'],
-                    foto_fr_1=user_info['foto_fr_1'],
-                    foto_fr_2=user_info['foto_fr_2'],
-                    foto_fr_3 = user_info['foto_fr_3'],
-                    interests = user_info['interests'],
-                    books = user_info['books'],
-                    music = user_info['music'],
-                    movies = user_info['movies']))
+                     name=user_info['name'],
+                     surname=user_info['surname'],
+                     age=user_info['age'],
+                     sex=user_info['sex'],
+                     city=user_info['city'],
+                     foto_a_1=user_info['foto_a_1'],
+                     foto_a_2=user_info['foto_a_2'],
+                     foto_a_3=user_info['foto_a_3'],
+                     foto_fr_1=user_info['foto_fr_1'],
+                     foto_fr_2=user_info['foto_fr_2'],
+                     foto_fr_3=user_info['foto_fr_3'],
+                     interests=user_info['interests'],
+                     books=user_info['books'],
+                     music=user_info['music'],
+                     movies=user_info['movies']))
             self._session.commit()
             return True
 
@@ -120,7 +120,8 @@ class ManageDB:
         user_id кто удаляет из базы\n
         bl_id кого удаляют из базы\n
         Возвращает True если удалено\n"""
-        self._session.query(BlackList).where(BlackList.user_id == str(user_id), BlackList.user_black_id == str(bl_id)).delete()
+        self._session.query(BlackList).where(BlackList.user_id == str(user_id),
+                                             BlackList.user_black_id == str(bl_id)).delete()
         self._session.commit()
         return True
 
@@ -133,7 +134,7 @@ class ManageDB:
             for x in favorite_ids.all():
                 fav_list.append(x.user_fav_id)
             return fav_list
-        except:
+        except Exception:
             return fav_list
 
     def get_list_blacklist(self, vk_id: str) -> list:
@@ -145,8 +146,9 @@ class ManageDB:
             for x in blacklist_ids.all():
                 bl_list.append(x.user_black_id)
             return bl_list
-        except:
+        except Exception:
             return bl_list
+
     def if_user_in_blacklist(self, vk_id_asking: str, vk_id_ckecking: str) -> bool:
         """Проверка на вхождение в черный список\n
         Возвращает True если юзер в черном списке\n"""

@@ -115,13 +115,6 @@ def create_keyboard(response):
     elif response == 'пока':
         keyboard.add_button('Привет', color=VkKeyboardColor.POSITIVE)
 
-    # else:
-    #     # Если непонятно, то отрабатываем ПРИВЕТ
-    #     keyboard.add_button('Поиск', color=VkKeyboardColor.POSITIVE)
-    #     keyboard.add_button('Работа с избранными', color=VkKeyboardColor.POSITIVE)
-    #     keyboard.add_button('Работа с черным списком', color=VkKeyboardColor.POSITIVE)
-    #     keyboard.add_button('Пока', color=VkKeyboardColor.NEGATIVE)
-
     keyboard = keyboard.get_keyboard()
     return keyboard
 
@@ -135,7 +128,8 @@ def safe_get_from_dict(in_dict: dict, key: str):
         key (str): The key to look up in the dictionary.
 
     Returns:
-        The value corresponding to the given key in the dictionary, or an empty string if the key is not found or if there is a type error.
+        The value corresponding to the given key in the dictionary, or an empty
+        string if the key is not found or if there is a type error.
     """
     try:
         return in_dict[key]
@@ -176,8 +170,8 @@ def calculate_age(birth_date):
     if len(data) != 3:
         return 0
     today = date.today()
-    age = today.year - data[2]-1 + ((today.month > data[1])
-                                    or (today.month == data[1] and today.day >= data[0]))
+    age = today.year - data[2] - 1 + ((today.month > data[1])
+                                      or (today.month == data[1] and today.day >= data[0]))
     return age
 
 
@@ -251,7 +245,7 @@ def user_photos(token_2, base_url, album: str, user_id: str) -> dict:
     # Retrieve user photos from a specified album.
     params = get_common_params(token_2)
     params.update({'owner_id': user_id, 'album_id': album,
-                  'extended': 1, 'count': '1000'})
+                   'extended': 1, 'count': '1000'})
     response = requests.get(build_url(base_url, 'photos.get'), params=params)
     return response.json()
 
@@ -267,8 +261,9 @@ def get_user_data_from_vk_id(base_url, token_2, user_id):
 
     Returns:
         dict or None: A dictionary containing user data including sex, first name, last name, deactivated status,
-        privacy status, birth date, favorite books, city, interests, favorite movies, favorite music, relationship status,
-        and calculated age if available. Returns None if the user data is not found or an error occurs.
+        privacy status, birth date, favorite books, city, interests, favorite movies, favorite music,
+        relationship status, and calculated age if available.
+        Returns None if the user data is not found or an error occurs.
     """
     url = build_url(base_url, 'users.get?')
     params = get_common_params(token_2)
@@ -279,7 +274,7 @@ def get_user_data_from_vk_id(base_url, token_2, user_id):
     response = requests.get(url, params=params)
     try:
         response = response.json()['response'][0]
-    except:
+    except KeyError:
         return None
     if 'bdate' in response.keys():
         response['age'] = calculate_age(response['bdate'])

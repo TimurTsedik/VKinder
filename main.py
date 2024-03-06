@@ -47,7 +47,8 @@ def start_vk_bot(token_1, token_2):
     def write_msg(user_id, mess, keyboard=None, attachment=None):
         if keyboard is not None:
             vk.method('messages.send', {
-                'user_id': user_id, 'message': mess, 'random_id': randrange(10 ** 7), 'keyboard': keyboard, 'attachment': attachment})
+                'user_id': user_id, 'message': mess, 'random_id': randrange(10 ** 7),
+                'keyboard': keyboard, 'attachment': attachment})
         else:
             vk.method('messages.send', {
                 'user_id': user_id, 'message': mess, 'random_id': randrange(10 ** 7), 'attachment': attachment})

@@ -25,7 +25,7 @@ class VkBot:
         self.token_2 = token_2
         self._USER_ID = user_id
         # self.common_params = {"access_token": self.token, "v": "5.131"}
-        self._USER_DATA = get_user_data_from_vk_id(self.base_url, self.token_2, user_id)
+        self._USER_DATA = get_user_data_from_vk_id(self.base_url, self.token_2, str(user_id))
         self._COMMANDS = [
             "ПРИВЕТ",
             "ПОИСК",
@@ -81,7 +81,7 @@ class VkBot:
         try:
             response = response.json()["response"]
             count, items = response["count"], response["items"]
-        except:
+        except KeyError:
             return f"Не удалось найти пользователей для знакомств"
         self.user_results.add_user(self._USER_DATA['id'])
         # очистка от предыдущих результатов поиска
@@ -209,7 +209,8 @@ class VkBot:
                 self.dbObject.actualize_user(next_user_pics)
             # create message
             url = f'https://vk.com/id{next_item}'
-            message = f"Кандидат в поиске:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+            message = (f"Кандидат в поиске:\n Имя: {first_name}\nФамилия: "
+                       f"{last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n")
             # Сохраняем id последнего просмотренного пользователя
             self.user_results.current_user[self._USER_DATA['id']] = next_item
             keyboard = create_keyboard(command.strip().lower())
@@ -230,7 +231,7 @@ class VkBot:
             attachment = ''
             return message, keyboard, attachment
 
-         # 4 'В черный список'
+        # 4 'В черный список'
         elif command.strip().upper() == self._COMMANDS[4]:
 
             cur_user_id = self.user_results.current_user[self._USER_DATA['id']]
@@ -288,7 +289,7 @@ class VkBot:
 
             return message, keyboard, attachment
 
-       # 9 'СЛЕДУЮЩИЙ В ИЗБРАННОМ'
+        # 9 'СЛЕДУЮЩИЙ В ИЗБРАННОМ'
         elif command.strip().upper() == self._COMMANDS[9]:
 
             list_favorits = self.dbObject.get_list_favorites(
@@ -318,11 +319,12 @@ class VkBot:
                         attachment = 'photo' + \
                             str(cur_user_data["vk_id"]) + '_' + str(photo[3])
                 url = f'https://vk.com/id{cur_user_data["vk_id"]}'
-                message = f"Следующий в избранном:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+                message = (f"Следующий в избранном:\n Имя: {first_name}\n"
+                           f"Фамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n")
 
             return message, keyboard, attachment
 
-       # 10 "РАБОТА С ЧЕРНЫМ СПИСКОМ"
+        # 10 "РАБОТА С ЧЕРНЫМ СПИСКОМ"
         elif command.strip().upper() == self._COMMANDS[10]:
 
             self.user_results.current_user[self._USER_DATA['id']] = None
@@ -383,7 +385,8 @@ class VkBot:
                         attachment = 'photo' + \
                             str(cur_user_data["vk_id"]) + '_' + str(photo[3])
                 url = f'https://vk.com/id{cur_user_data["vk_id"]}'
-                message = f"Следующий в черном списке:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+                message = (f"Следующий в черном списке:\n Имя: {first_name}\n"
+                           f"Фамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n")
 
             return message, keyboard, attachment
 
@@ -405,7 +408,8 @@ class VkBot:
                     last_name = cur_user_data["surname"]
                     age = cur_user_data["age"]
                     url = f'https://vk.com/id{cur_user_data["vk_id"]}'
-                    favorite = f"Следующий в избранном:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+                    favorite = (f"Следующий в избранном:\n Имя: {first_name}\n"
+                                f"Фамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n")
                     all_favorits.append(favorite)
                 message = "\n\n".join(all_favorits)
             return message, keyboard, attachment
@@ -428,7 +432,8 @@ class VkBot:
                     last_name = cur_user_data["surname"]
                     age = cur_user_data["age"]
                     url = f'https://vk.com/id{cur_user_data["vk_id"]}'
-                    black_user = f"Следующий в черном списке:\n Имя: {first_name}\nФамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n"
+                    black_user = (f"Следующий в черном списке:\n Имя: {first_name}\n"
+                                  f"Фамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n")
                     all_black_users.append(black_user)
                 message = "\n\n".join(all_black_users)
             return message, keyboard, attachment
@@ -439,8 +444,6 @@ class VkBot:
             message = f"Пока, {self._USER_DATA['first_name']}!"
             attachment = ''
             return message, keyboard, attachment
-
-
 
         # 16 "УДАЛИТЬ ИЗ ИЗБРАННЫХ"
         elif command.strip().upper() == self._COMMANDS[16]:
@@ -455,7 +458,6 @@ class VkBot:
             message = f'Пользователь с id {cur_user_data["vk_id"]} удален из списка избранных'
             return message, keyboard, attachment
 
-
         # 17 "УДАЛИТЬ ИЗ ЧЕРНОГО СПИСКА"
         elif command.strip().upper() == self._COMMANDS[17]:
             list_blacklist = self.dbObject.get_list_blacklist(
@@ -468,9 +470,6 @@ class VkBot:
             attachment = ''
             message = f'Пользователь с id {cur_user_data["vk_id"]} удален из списка избранных'
             return message, keyboard, attachment
-
-
-
 
         else:
             message = "Не понимаю о чем вы..."

@@ -44,7 +44,8 @@ class UserResultsStorage:
             user_id (int): The ID of the user whose data is to be retrieved.
 
         Returns:
-            str: The data associated with the user ID, or an empty string if the user ID is not found or the user's data list is empty.
+            str: The data associated with the user ID, or an empty string if the
+            user ID is not found or the user's data list is empty.
         """
         if user_id not in self.users:
             return ''
