@@ -45,4 +45,6 @@ def create_tables(engine):
     """
     create_tables function description, including its parameters and return type.
     """
+    # Не забыть удалить перед сдачей проекта!!!!!!!!!
+    # Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
