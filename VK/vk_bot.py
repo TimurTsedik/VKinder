@@ -111,12 +111,17 @@ class VkBot:
                 'movies': safe_get_from_dict(item, 'movies'),
                 'music': safe_get_from_dict(item, 'music')
             }
-            if not self.dbObject.add_user_db(user_dict):
+            if self.dbObject.add_user_db(user_dict) == 1 :
                 print(
-                    f"Не удалось добавить пользователя {user_dict['vk_id']} в базу данных")
-            else:
+                    f"Не удалось добавить пользователя {user_dict['vk_id']} в базу данных. Возраст: {user_dict['age']}")
+            elif self.dbObject.add_user_db(user_dict) == 0:
                 self.user_results.add_data(self._USER_DATA['id'], item['id'])
-                self.user_results.randomize_data(self._USER_DATA['id'])
+            else:
+                print(
+                    f"Пользователь {user_dict['vk_id']} добавлен в базу данных. Возраст: {user_dict['age']}")
+        # avoiding dups in users list
+        self.user_results.make_list_distinct(self._USER_DATA['id'])
+        self.user_results.randomize_data(self._USER_DATA['id'])
         return f"Найдены записи о {_} пользователях для знакомства. Для просмотра нажмите кнопку 'Следующий в поиске'"
 
     def execute_command(self, command: str):
@@ -158,6 +163,8 @@ class VkBot:
                 'music': safe_get_from_dict(self._USER_DATA, 'music')
             }
             self.dbObject.add_user_db(user_dict)
+            self.user_results.last_favorite_num[self._USER_DATA['id']] = -1
+            self.user_results.last_blacklist_num[self._USER_DATA['id']] = -1
             keyboard = create_keyboard(command.strip().lower())
             message = f"Привет, {self._USER_DATA['first_name']}!"
             attachment = ''
@@ -190,7 +197,8 @@ class VkBot:
             # if user actual and at least one photo
             if self.dbObject.actualize_user(user_details) and user_details['foto_a_1'] != '':
                 # take from DB
-                attachment = ','.join[user_details['foto_a_1'], user_details['foto_a_2'], user_details['foto_a_3']]
+
+                attachment = ','.join([user_details['foto_a_1'], user_details['foto_a_2'], user_details['foto_a_3']])
             else:
                 # take from VK
                 for photo in get_user_most_liked_photos(self.token_2, self.base_url, next_item):
@@ -248,7 +256,7 @@ class VkBot:
         # 5 'Лайк/дизлайк'
         elif command.strip().upper() == self._COMMANDS[5]:
             keyboard = create_keyboard(command.strip().lower())
-            message = 'тут будет лайк/дизлайк'
+            message = 'тут будет лайк/дизлайк'
             attachment = ''
             return message, keyboard, attachment
 
@@ -271,6 +279,7 @@ class VkBot:
             else:
                 message = f'В вашем списке избранных {len(list_favorits)} пользователей'
                 keyboard = create_keyboard(command.strip().lower())
+                self.user_results.last_favorite_num[self._USER_DATA['id']] = -1
             attachment = ''
             return message, keyboard, attachment
 
@@ -300,14 +309,20 @@ class VkBot:
                 keyboard = create_keyboard('привет')
             else:
                 keyboard = create_keyboard(command.strip().lower())
-                cur_user_data = self.dbObject.get_user_by_vk_id(
-                    list_favorits[0])
+                last_viewed_user_num = self.user_results.get_last_favorite_num(self._USER_DATA['id'])
+                if last_viewed_user_num + 1 >= len(list_favorits):
+                    message = 'Ваш список избранных подошел к концу'
+                    keyboard = create_keyboard('привет')
+                    self.user_results.last_favorite_num[self._USER_DATA['id']] = -1
+                    return message, keyboard, attachment
+                else:
+                    cur_user_data = self.dbObject.get_user_by_vk_id(list_favorits[last_viewed_user_num + 1])
                 # self.dbObject.remove_favorites(
                 #     str(self._USER_ID), cur_user_data["vk_id"])
                 first_name = cur_user_data["name"]
                 last_name = cur_user_data["surname"]
                 age = cur_user_data["age"]
-
+                self.user_results.last_favorite_num[self._USER_DATA['id']] = last_viewed_user_num + 1
                 self.user_results.current_user[self._USER_DATA['id']
                                                ] = cur_user_data["vk_id"]
 
@@ -336,6 +351,7 @@ class VkBot:
             else:
                 message = f'В вашем черном списке {len(list_blacklist)} пользователей'
                 keyboard = create_keyboard(command.strip().lower())
+                self.user_results.last_blacklist_num[self._USER_DATA['id']] = -1
             attachment = ''
             return message, keyboard, attachment
 
@@ -366,14 +382,21 @@ class VkBot:
                 keyboard = create_keyboard('привет')
             else:
                 keyboard = create_keyboard(command.strip().lower())
-                cur_user_data = self.dbObject.get_user_by_vk_id(
-                    list_blacklist[0])
+                last_viewed_user_num = self.user_results.get_last_blacklist_num(self._USER_DATA['id'])
+                if last_viewed_user_num + 1 >= len(list_blacklist):
+                    message = 'Ваш черный список подошел к концу'
+                    keyboard = create_keyboard('привет')
+                    self.user_results.last_favorite_num[self._USER_DATA['id']] = -1
+                    return message, keyboard, attachment
+                else:
+                    cur_user_data = self.dbObject.get_user_by_vk_id(list_blacklist[last_viewed_user_num + 1])
+
                 # self.dbObject.remove_blacklist(
                 #     str(self._USER_ID), cur_user_data["vk_id"])
                 first_name = cur_user_data["name"]
                 last_name = cur_user_data["surname"]
                 age = cur_user_data["age"]
-
+                self.user_results.last_blacklist_num[self._USER_DATA['id']] = last_viewed_user_num + 1
                 self.user_results.current_user[self._USER_DATA['id']
                                                ] = cur_user_data["vk_id"]
 
@@ -412,6 +435,7 @@ class VkBot:
                                 f"Фамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n")
                     all_favorits.append(favorite)
                 message = "\n\n".join(all_favorits)
+                self.user_results.last_favorite_num[self._USER_DATA['id']] = -1
             return message, keyboard, attachment
 
         # 14 "ЧЕРНЫЙ СПИСОК ЦЕЛИКОМ"
@@ -436,6 +460,7 @@ class VkBot:
                                   f"Фамилия: {last_name}\nВозраст: {age}\nСсылка на профиль: {url}\n")
                     all_black_users.append(black_user)
                 message = "\n\n".join(all_black_users)
+                self.user_results.last_blacklist_num[self._USER_DATA['id']] = -1
             return message, keyboard, attachment
 
         # 15 "ПОКА"
