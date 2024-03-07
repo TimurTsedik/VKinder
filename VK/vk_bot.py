@@ -472,10 +472,7 @@ class VkBot:
 
         # 16 "УДАЛИТЬ ИЗ ИЗБРАННЫХ"
         elif command.strip().upper() == self._COMMANDS[16]:
-            list_favorits = self.dbObject.get_list_favorites(
-                str(self._USER_ID))
-            cur_user_data = self.dbObject.get_user_by_vk_id(
-                list_favorits[0])
+            cur_user_data = self.dbObject.get_user_by_vk_id(self.user_results.current_user[self._USER_DATA['id']])
             self.dbObject.remove_favorites(
                 str(self._USER_ID), cur_user_data["vk_id"])
             keyboard = create_keyboard("работа с избранными")
@@ -485,10 +482,7 @@ class VkBot:
 
         # 17 "УДАЛИТЬ ИЗ ЧЕРНОГО СПИСКА"
         elif command.strip().upper() == self._COMMANDS[17]:
-            list_blacklist = self.dbObject.get_list_blacklist(
-                str(self._USER_ID))
-            cur_user_data = self.dbObject.get_user_by_vk_id(
-                list_blacklist[0])
+            cur_user_data = self.dbObject.get_user_by_vk_id(self.user_results.current_user[self._USER_DATA['id']])
             self.dbObject.remove_blacklist(
                 str(self._USER_ID), cur_user_data["vk_id"])
             keyboard = create_keyboard("работа с черным списком")
