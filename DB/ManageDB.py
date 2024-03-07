@@ -15,7 +15,7 @@ class ManageDB:
         create_tables(self.engine)
         self._session = sessionmaker(bind=self.engine)()
 
-    def add_user_db(self, user_info: dict) -> bool:
+    def add_user_db(self, user_info: dict) -> int:
         """Добавление пользователя в базу\n
         Параметры:\n
         Vk_id - integer\n
@@ -23,14 +23,16 @@ class ManageDB:
         Age - integer > 0\n
         Gender is Male = 1, Female = 0\n
         City - INTEGER\n
-        Возвращает True если юзер добавлен в базу.\n"""
+        Возвращает  0 если юзер уже есть в базе.
+        возвращает  1 если юзер меньше 18\n
+        Возвращает  2 если юзер добавлен в базу."""
         x_ret = self._session.query(User).where(User.vk_id == user_info['vk_id'])
         # Проверка 18+
         if int(user_info['age']) < 18:
-            return False
+            return 1
         # Проверка на существование в базе
         elif len(x_ret.all()) > 0:
-            return False
+            return 0
         else:
             self._session.add(
                 User(vk_id=user_info['vk_id'],
@@ -50,7 +52,7 @@ class ManageDB:
                      music=user_info['music'],
                      movies=user_info['movies']))
             self._session.commit()
-            return True
+            return 2
 
     def actualize_user(self, user_info: dict) -> bool:
         """Обновление пользователя в базе\n
@@ -179,23 +181,23 @@ class ManageDB:
 
 
 # Тест базы
-if __name__ == '__main__':
-    config = configparser.ConfigParser()
-    config.read('../config.ini')
-    DB = ManageDB(db_name=config['DB']['DB_name'], user_name=config['DB']['DB_user'],
-                  user_password=config['DB']['DB_password'])
-
-    DB.add_user_db(
-        {"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "431302925", "foto_a_1": "1",
-         "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
-    DB.add_user_db({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2", "foto_a_1": "1",
-                    "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
-    DB.add_user_db(
-        {"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3", "foto_a_1": "1", "foto_a_2": "2",
-         "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
-    DB.actualize_user({"name": "Vasya", "surname": "Pupkin", "age": 38, "sex": 1, "city": 1, "vk_id": "431302925"})
-    DB.add_favorites("431302925", "2")
-    DB.add_blacklist("431302925", "3")
-    print(DB.get_list_favorites("431302925"))
-    print(DB.get_list_blacklist("431302925"))
-    print(DB.get_user_by_vk_id("431302925"))
+# if __name__ == '__main__':
+#     config = configparser.ConfigParser()
+#     config.read('../config.ini')
+#     DB = ManageDB(db_name=config['DB']['DB_name'], user_name=config['DB']['DB_user'],
+#                   user_password=config['DB']['DB_password'])
+#
+#     DB.add_user_db(
+#         {"name": "Vasya", "surname": "Pupkin", "age": 18, "sex": 1, "city": 1, "vk_id": "431302925", "foto_a_1": "1",
+#          "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+#     DB.add_user_db({"name": "Petya", "surname": "Ivanov", "age": 55, "sex": 1, "city": 1, "vk_id": "2", "foto_a_1": "1",
+#                     "foto_a_2": "2", "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+#     DB.add_user_db(
+#         {"name": "V", "surname": "P", "age": 20, "sex": 1, "city": 1, "vk_id": "3", "foto_a_1": "1", "foto_a_2": "2",
+#          "foto_a_3": "3", "foto_fr_1": "4", "foto_fr_2": "5", "foto_fr_3": "6"})
+#     DB.actualize_user({"name": "Vasya", "surname": "Pupkin", "age": 38, "sex": 1, "city": 1, "vk_id": "431302925"})
+#     DB.add_favorites("431302925", "2")
+#     DB.add_blacklist("431302925", "3")
+#     print(DB.get_list_favorites("431302925"))
+#     print(DB.get_list_blacklist("431302925"))
+#     print(DB.get_user_by_vk_id("431302925"))
