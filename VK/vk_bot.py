@@ -1,6 +1,6 @@
 import requests
 
-from VK.vk_api_fuctions import create_keyboard, safe_get_from_dict, safe_get_from_list, calculate_age, build_url, \
+from VK.vk_api_functions import create_keyboard, safe_get_from_dict, safe_get_from_list, calculate_age, build_url, \
     get_common_params, get_user_most_liked_photos, get_user_data_from_vk_id
 
 
