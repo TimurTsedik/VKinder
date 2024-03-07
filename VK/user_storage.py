@@ -8,6 +8,8 @@ class UserResultsStorage:
     def __init__(self):
         self.users = {}
         self.current_user = {}
+        self.last_favorite_num = {}
+        self.last_blacklist_num = {}
 
     def add_user(self, user_id):
         """
@@ -78,3 +80,28 @@ class UserResultsStorage:
             None
         """
         random.shuffle(self.users[user_id])
+
+
+    def make_list_distinct(self, user_id):
+        """
+        Makes the list of data for the given user ID distinct.
+
+        Args:
+            self: The object instance
+            user_id: The ID of the user whose data needs to be made distinct
+
+        Returns:
+            None
+        """
+        self.users[user_id] = list(set(self.users[user_id]))
+
+    def get_last_favorite_num(self, user_id):
+        if user_id not in self.last_favorite_num:
+            self.last_favorite_num[user_id] = 0
+        return self.last_favorite_num[user_id]
+        
+
+    def get_last_blacklist_num(self, user_id):
+        if user_id not in self.last_blacklist_num:
+            self.last_blacklist_num[user_id] = 0
+        return self.last_blacklist_num[user_id]
